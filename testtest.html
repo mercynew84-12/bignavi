@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Navigators - Home</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #00FFFF;
+    }
+    header {
+        background-color: #0b74de;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+    }
+    header img {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        height: 70px;
+    }
+    .form-container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #0b74de;
+    }
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #0b74de;
+        border: none;
+        color: white;
+        font-size: 18px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #095bb5;
+    }
+    #resultBox {
+        margin-top: 20px;
+        padding: 15px;
+        background: #eaf6ff;
+        border-left: 5px solid #0b74de;
+        display: none;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Big Navigators Pvt Ltd</h1>
+    <img src="bnlogo.jpg" alt="Company Logo" class="logo">
+</header>
+
+<div class="form-container">
+    <h2>Contact & CBM Form</h2>
+    <form id="contactForm" action="https://formspree.io/f/mrbanejy" method="POST">
+        <label for="name">Name</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required placeholder="example@email.com">
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" name="phone" id="phone" required 
+               pattern="[0-9]{10,15}" 
+               title="Phone number must be between 10 and 15 digits">
+
+        <label for="company">Company Name</label>
+        <input type="text" name="company" id="company" required>
+
+        <label for="cbm">Update CBM</label>
+        <input type="number" name="cbm" id="cbm" required step="0.01">
+
+        <label for="weight">Weight (Tonne)</label>
+        <input type="number" name="weight" id="weight" required step="1">
+
+        <label for="location">Location</label>
+        <select name="location" id="location" required>
+            <option value="">-- Select Location --</option>
+            <option value="chennai">Chennai</option>
+            <option value="nhava sheva">Nhava Sheva</option>
+        </select>
+
+        <!-- Hidden fields to send charges -->
+        <input type="hidden" name="originCharges" id="originCharges">
+        <input type="hidden" name="destinationCharges" id="destinationCharges">
+        <input type="hidden" name="thankyouMessage" id="thankyouMessage">
+
+        <!-- New hidden fields to send CBM and Weight -->
+        <input type="hidden" name="submittedCBM" id="submittedCBM">
+        <input type="hidden" name="submittedWeight" id="submittedWeight">
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="resultBox"></div>
+</div>
+
+<script>
+document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const cbm = parseFloat(document.getElementById("cbm").value) || 0;
+    const weight = parseInt(document.getElementById("weight").value) || 0;
+    const location = document.getElementById("location").value;
+
+    if (!location) {
+        alert("Please select a location.");
+        return;
+    }
+
+    const A = Math.max(cbm, weight); // larger of CBM or weight
+
+    let originCharges = (A * 40) + 150;
+
+    // Destination calculation
+    let F = (950 * A) + 5500 + 7500;
+    let G1 = F * 0.18;
+    let H1 = F + G1;
+
+    let destinationFactor = (location === "chennai") ? 3500 : 4500;
+    let I = (380 * A) + (destinationFactor * A) + 3200;
+    let G2 = I * 0.18;
+    let H2 = I + G2;
+
+    let destinationCharges = H1 + H2;
+
+    // Fill hidden fields for Formspree
+    document.getElementById("originCharges").value = originCharges.toFixed(2);
+    document.getElementById("destinationCharges").value = destinationCharges.toFixed(2);
+    document.getElementById("thankyouMessage").value = "Thank you for choosing Big Navigators Pvt Ltd.";
+    document.getElementById("submittedCBM").value = cbm.toFixed(2);
+    document.getElementById("submittedWeight").value = weight;
+
+    // Show result to user
+    const resultBox = document.getElementById("resultBox");
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+        <h3>Calculation Result</h3>
+        <p><strong>CBM Entered:</strong> ${cbm.toFixed(2)}</p>
+        <p><strong>Weight Entered:</strong> ${weight}</p>
+        <p><strong>Total Origin Charges:</strong> ${originCharges.toFixed(2)}</p>
+        <p><strong>Total Destination Charges:</strong> ${destinationCharges.toFixed(2)}</p>
+        <p>Thank you for choosing Big Navigators Pvt Ltd.</p>
+    `;
+
+    // Send data to Formspree
+    fetch(e.target.action, {
+        method: e.target.method,
+        body: new FormData(e.target),
+        headers: { 'Accept': 'application/json' }
+    }).then(response => {
+        if (response.ok) {
+            resultBox.innerHTML += `<p style="color:green;">Form submitted successfully. We’ll contact you shortly.</p>`;
+        } else {
+            alert("Form submission failed.");
+        }
+    }).catch(error => {
+        alert("Something went wrong!");
+    });
+});
+
+// Prevent decimals in weight
+document.getElementById("weight").addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, ""); 
+});
+</script>
+
+</body>
+</html>
