@@ -5,11 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Big Navigators - Home</title>
 <style>
-    body {
+   body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f9;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+
+        /* Logistics Port Background */
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url('image1.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
     header {
         background-color: #0b74de;
@@ -70,18 +79,25 @@
         border-left: 5px solid #0b74de;
         display: none;
     }
+    footer {
+        background-color: #0b74de;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
+        margin-top: auto;
+    }
 </style>
 </head>
 <body>
 
 <header>
-    <h1>Big Navigators Pvt Ltd</h1>
     <img src="bnlogo.jpg" alt="Company Logo" class="logo">
 </header>
 
 <div class="form-container">
-    <h2>CALCULATOR FOR CIF SHIPMENTS</h2>
-    <form id="contactForm" action="https://formspree.io/f/mrbanejy" method="POST">
+    <h2>CALCULATOR FOR CIF LCL SHIPMENT FROM SHANGHAI TO INDIA</h2>
+    <form id="contactForm" action="" method="POST">
         <label for="name">Contact Name</label>
         <input type="text" name="name" id="name" required>
 
@@ -97,10 +113,10 @@
         <input type="text" name="company" id="company" required>
 
         <label for="cbm">Enter CBM</label>
-        <input type="number" name="cbm" id="cbm" required step="0.01">
+        <input type="number" name="cbm" id="cbm" required step="0.01" placeholder="e.g., 12.34">
 
         <label for="weight">Enter Weight (Tonne)</label>
-        <input type="number" name="weight" id="weight" required step="1">
+        <input type="number" name="weight" id="weight" required step="1" placeholder="e.g., 12">
 
         <label for="location">Location</label>
         <select name="location" id="location" required>
@@ -109,12 +125,17 @@
             <option value="nhava sheva">Nhava Sheva</option>
         </select>
 
-        <!-- Hidden fields to send charges -->
+        <label for="cargo">Cargo Type</label>
+        <select name="cargo" id="cargo" required>
+            <option value="">-- Select Cargo Type --</option>
+            <option value="general cargo">General Cargo</option>
+            <option value="dg cargo">DG Cargo</option>
+        </select>
+
+        <!-- Hidden fields -->
         <input type="hidden" name="originCharges" id="originCharges">
         <input type="hidden" name="destinationCharges" id="destinationCharges">
         <input type="hidden" name="thankyouMessage" id="thankyouMessage">
-
-        <!-- New hidden fields to send CBM and Weight -->
         <input type="hidden" name="submittedCBM" id="submittedCBM">
         <input type="hidden" name="submittedWeight" id="submittedWeight">
 
@@ -124,74 +145,117 @@
     <div id="resultBox"></div>
 </div>
 
+<footer>
+    <p>DG Acceptance Class 2.2/3/4.1/6.1/8/9*</p>
+    <p>📦 Transit Time: Shanghai to Chennai – 20 Days | Shanghai to Nhava Sheva – 22 Days</p>
+    <p>&copy; 2025 Big Navigators Pvt Ltd. All Rights Reserved.</p>
+</footer>
+
 <script>
 document.getElementById("contactForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
     const cbm = parseFloat(document.getElementById("cbm").value) || 0;
     const weight = parseInt(document.getElementById("weight").value) || 0;
-    const location = document.getElementById("location").value;
+    const location = document.getElementById("location").value.toLowerCase();
+    const cargo = document.getElementById("cargo").value.toLowerCase();
 
-    if (!location) {
-        alert("Please select a location.");
+    if (!location || !cargo) {
+        alert("Please select both location and cargo type.");
         return;
     }
 
-    const A = Math.max(cbm, weight); // larger of CBM or weight
+    // === General Cargo calculations ===
+    if ((location === "chennai" && cargo === "general cargo") || 
+        (location === "nhava sheva" && cargo === "general cargo")) {
 
-    let originCharges = (A * 40) + 150;
+        const A = Math.max(cbm, weight);
 
-    // Destination calculation
-    let F = (950 * A) + 5500 + 7500;
-    let G1 = F * 0.18;
-    let H1 = F + G1;
+        let originCharges = (A * 40) + 150;
 
-    let destinationFactor = (location === "chennai") ? 3500 : 4500;
-    let I = (380 * A) + (destinationFactor * A) + 3200;
-    let G2 = I * 0.18;
-    let H2 = I + G2;
+        let F = (950 * A) + 5500 + 7500;
+        let G1 = F * 0.18;
+        let H1 = F + G1;
 
-    let destinationCharges = H1 + H2;
+        let destinationFactor = (location === "chennai") ? 3500 : 4500;
+        let I = (380 * A) + (destinationFactor * A) + 3200;
+        let G2 = I * 0.18;
+        let H2 = I + G2;
 
-    // Fill hidden fields for Formspree
+        let destinationCharges = H1 + H2;
+
+        showResult(location, cargo, originCharges, destinationCharges);
+
+    // === DG Cargo calculations (placeholders) ===
+} else if (location === "chennai" && cargo === "dg cargo") {
+    const B = Math.max(cbm, weight);
+
+    // Step 1: Total Origin Charges
+    let originCharges = (B * 280) + 2210;
+
+    // Step 2: C
+    let C = (1400 * B) + 5500 + 7500;
+
+    // Step 3: D
+    let D = C * 0.18;
+
+    // Step 4: BS1
+    let BS1 = C + D;
+
+    // Step 5: W
+    let W = (380 * B) + (6200 * B) + 4200;
+
+    // Step 6: X
+    let X = W * 0.18;
+
+    // Step 7: BS2
+    let BS2 = W + X;
+
+    // Step 8: Total Destination Charges
+    let destinationCharges = BS1 + BS2;
+
+    showResult(location, cargo, originCharges, destinationCharges);
+}
+
+
+    } else {
+        alert("Calculation logic for this cargo type or location is not yet added.");
+    }
+});
+
+// Helper function to display results
+function showResult(location, cargo, originCharges, destinationCharges) {
     document.getElementById("originCharges").value = originCharges.toFixed(2);
     document.getElementById("destinationCharges").value = destinationCharges.toFixed(2);
     document.getElementById("thankyouMessage").value = "Thank you for choosing Big Navigators Pvt Ltd.";
 
-    // Heading text based on location
     const heading = (location === "chennai") 
         ? "Chennai CIF Shipment" 
         : "Nhava Sheva CIF Shipment";
 
-    // Show result to user
     const resultBox = document.getElementById("resultBox");
     resultBox.style.display = "block";
     resultBox.innerHTML = `
-        <h3>${heading}</h3>
-         <p><strong>Total Origin Charges: RMB</strong> ${originCharges.toFixed(2)}</p>
+        <h3>${heading} - ${cargo.toUpperCase()}</h3>
+        <p><strong>Total Origin Charges: RMB</strong> ${originCharges.toFixed(2)}</p>
         <p><strong>Total Destination Charges: INR</strong> ${destinationCharges.toFixed(2)}</p>
+        <p><strong>Note: </strong> Destination Charges (including GST)</p>
+        <p>Above charges are exclusive of ocean freight</p>
+        <p>Please check with out local agent for ocean freight</p>
         <p>Thank you for choosing Big Navigators Pvt Ltd.</p>
     `;
+}
 
-    // Send data to Formspree
-    fetch(e.target.action, {
-        method: e.target.method,
-        body: new FormData(e.target),
-        headers: { 'Accept': 'application/json' }
-    }).then(response => {
-        if (response.ok) {
-            resultBox.innerHTML += `<p style="color:green;">Form submitted successfully. We’ll contact you shortly.</p>`;
-        } else {
-            alert("Form submission failed.");
-        }
-    }).catch(error => {
-        alert("Something went wrong!");
-    });
+// Prevent decimals in weight field
+document.getElementById("weight").addEventListener("input", function() {
+    this.value = this.value.replace(/\D/g, ""); // only digits
 });
 
-// Prevent decimals in weight
-document.getElementById("weight").addEventListener("input", function() {
-    this.value = this.value.replace(/\D/g, ""); 
+// Format CBM to 2 decimals when leaving the field
+document.getElementById("cbm").addEventListener("blur", function() {
+    if(this.value) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
 });
 </script>
 
