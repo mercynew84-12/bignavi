@@ -1,4 +1,152 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Big Navigators - Home</title> <style> body { font-family: Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; /* Logistics Port Background */ background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('image1.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; } header { background-color: #0b74de; color: white; padding: 20px; text-align: center; position: relative; } header img { position: absolute; right: 20px; top: 10px; height: 70px; } .form-container { max-width: 500px; margin: 40px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0px 4px 15px rgba(0,0,0,0.1); } h2 { text-align: center; margin-bottom: 20px; color: #0b74de; } label { display: block; margin: 10px 0 5px; font-weight: bold; } input, select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; } button { width: 100%; padding: 12px; background: #0b74de; border: none; color: white; font-size: 18px; border-radius: 6px; cursor: pointer; } button:hover { background: #095bb5; } #resultBox { margin-top: 20px; padding: 15px; background: #eaf6ff; border-left: 5px solid #0b74de; display: none; } footer { background-color: #0b74de; color: white; text-align: center; padding: 15px; font-size: 14px; margin-top: auto; } </style> </head> <body> <header> <img src="bnlogo.jpg" alt="Company Logo" class="logo"> </header> <div class="form-container"> <h2>CALCULATOR FOR CIF LCL SHIPMENT FROM SHANGHAI TO INDIA</h2> <form id="contactForm" action="https://formspree.io/f/xovkjnge" method="POST"> <label for="name">Contact Name</label> <input type="text" name="name" id="name" required> <label for="email">Email</label> <input type="email" name="email" id="email" required placeholder="example@email.com"> <label for="phone">Phone Number</label> <input type="tel" name="phone" id="phone" required pattern="[0-9]{10,15}" title="Phone number must be between 10 and 15 digits"> <label for="company">Company Name</label> <input type="text" name="company" id="company" required> <label for="cbm">Enter CBM</label> <input type="number" name="cbm" id="cbm" required step="0.01" placeholder="e.g., 12.34"> <label for="weight">Enter Weight (Tonne)</label> <input type="number" name="weight" id="weight" required step="1" placeholder="e.g., 12"> <label for="location">Location</label> <select name="location" id="location" required> <option value="">-- Select Location --</option> <option value="chennai">Chennai</option> <option value="nhava sheva">Nhava Sheva</option> </select> <label for="cargo">Cargo Type</label> <select name="cargo" id="cargo" required> <option value="">-- Select Cargo Type --</option> <option value="general cargo">General Cargo</option> <option value="dg cargo">DG Cargo</option> </select> <!-- Hidden fields --> <input type="hidden" name="originCharges" id="originCharges"> <input type="hidden" name="destinationCharges" id="destinationCharges"> <input type="hidden" name="thankyouMessage" id="thankyouMessage"> <input type="hidden" name="submittedCBM" id="submittedCBM"> <input type="hidden" name="submittedWeight" id="submittedWeight"> <button type="submit">Submit</button> </form> <div id="resultBox"></div> </div> <footer> <p>DG Acceptance Class 2.2/3/4.1/6.1/8/9*</p> <p>📦 Transit Time: Shanghai to Chennai – 20 Days | Shanghai to Nhava Sheva – 22 Days</p> <p>&copy; 2025 Big Navigators Pvt Ltd. All Rights Reserved.</p> </footer>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Navigators - Home</title>
+<style>
+   body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+
+        /* Logistics Port Background */
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url('image1.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    header {
+        background-color: #0b74de;
+        text-align: center;
+    }
+    header img {
+        height: 70px;     /* logo height */
+        display: block;   /* makes centering work */
+        margin: 0 auto;   /* centers the logo */
+    }
+    .form-container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #0b74de;
+    }
+    label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+    }
+    input, select {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #0b74de;
+        border: none;
+        color: white;
+        font-size: 18px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+    button:hover {
+        background: #095bb5;
+    }
+    #resultBox {
+        margin-top: 20px;
+        padding: 15px;
+        background: #eaf6ff;
+        border-left: 5px solid #0b74de;
+        display: none;
+    }
+    footer {
+        background-color: #0b74de;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
+        margin-top: auto;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <img src="bnlogo.jpg" alt="Company Logo" class="logo">
+</header>
+
+<div class="form-container">
+    <h2>CALCULATOR FOR CIF LCL SHIPMENT FROM SHANGHAI TO INDIA</h2>
+    <form id="contactForm" action="https://formspree.io/f/xovkjnge" method="POST">
+        <label for="name">Contact Name</label>
+        <input type="text" name="name" id="name" required>
+
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required placeholder="example@email.com">
+
+        <label for="phone">Phone Number</label>
+        <input type="tel" name="phone" id="phone" required 
+               pattern="[0-9]{10,15}" 
+               title="Phone number must be between 10 and 15 digits">
+
+        <label for="company">Company Name</label>
+        <input type="text" name="company" id="company" required>
+
+        <label for="cbm">Enter CBM</label>
+        <input type="number" name="cbm" id="cbm" required step="0.01" placeholder="e.g., 12.34">
+
+        <label for="weight">Enter Weight (Tonne)</label>
+        <input type="number" name="weight" id="weight" required step="1" placeholder="e.g., 12">
+
+        <label for="location">Location</label>
+        <select name="location" id="location" required>
+            <option value="">-- Select Location --</option>
+            <option value="chennai">Chennai</option>
+            <option value="nhava sheva">Nhava Sheva</option>
+        </select>
+
+        <label for="cargo">Cargo Type</label>
+        <select name="cargo" id="cargo" required>
+            <option value="">-- Select Cargo Type --</option>
+            <option value="general cargo">General Cargo</option>
+            <option value="dg cargo">DG Cargo</option>
+        </select>
+
+        <!-- Hidden fields -->
+        <input type="hidden" name="originCharges" id="originCharges">
+        <input type="hidden" name="destinationCharges" id="destinationCharges">
+        <input type="hidden" name="thankyouMessage" id="thankyouMessage">
+        <input type="hidden" name="submittedCBM" id="submittedCBM">
+        <input type="hidden" name="submittedWeight" id="submittedWeight">
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="resultBox"></div>
+</div>
+
+<footer>
+    <p>DG Acceptance Class 2.2/3/4.1/6.1/8/9*</p>
+    <p>📦 Transit Time: Shanghai to Chennai – 20 Days | Shanghai to Nhava Sheva – 22 Days</p>
+    <p>&copy; 2025 Big Navigators Pvt Ltd. All Rights Reserved.</p>
+</footer>
+
 <script>
 document.getElementById("contactForm").addEventListener("submit", function(e) {
     e.preventDefault();
@@ -34,36 +182,37 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
 
         showResult(location, cargo, originCharges, destinationCharges);
 
-    // === DG Cargo calculations (Chennai + Nhava Sheva use same logic) ===
-    } else if ((location === "chennai" && cargo === "dg cargo") || 
-               (location === "nhava sheva" && cargo === "dg cargo")) {
-        const B = Math.max(cbm, weight);
+    // === DG Cargo calculations (placeholders) ===
+} else if (location === "chennai" && cargo === "dg cargo") {
+    const B = Math.max(cbm, weight);
 
-        // Step 1: Total Origin Charges
-        let originCharges = (B * 280) + 2210;
+    // Step 1: Total Origin Charges
+    let originCharges = (B * 280) + 2210;
 
-        // Step 2: C
-        let C = (1400 * B) + 5500 + 7500;
+    // Step 2: C
+    let C = (1400 * B) + 5500 + 7500;
 
-        // Step 3: D
-        let D = C * 0.18;
+    // Step 3: D
+    let D = C * 0.18;
 
-        // Step 4: BS1
-        let BS1 = C + D;
+    // Step 4: BS1
+    let BS1 = C + D;
 
-        // Step 5: W
-        let W = (380 * B) + (6200 * B) + 4200;
+    // Step 5: W
+    let W = (380 * B) + (6200 * B) + 4200;
 
-        // Step 6: X
-        let X = W * 0.18;
+    // Step 6: X
+    let X = W * 0.18;
 
-        // Step 7: BS2
-        let BS2 = W + X;
+    // Step 7: BS2
+    let BS2 = W + X;
 
-        // Step 8: Total Destination Charges
-        let destinationCharges = BS1 + BS2;
+    // Step 8: Total Destination Charges
+    let destinationCharges = BS1 + BS2;
 
-        showResult(location, cargo, originCharges, destinationCharges);
+    showResult(location, cargo, originCharges, destinationCharges);
+}
+
 
     } else {
         alert("Calculation logic for this cargo type or location is not yet added.");
@@ -86,10 +235,7 @@ function showResult(location, cargo, originCharges, destinationCharges) {
         <h3>${heading} - ${cargo.toUpperCase()}</h3>
         <p><strong>Total Origin Charges: RMB</strong> ${originCharges.toFixed(2)}</p>
         <p><strong>Total Destination Charges: INR</strong> ${destinationCharges.toFixed(2)}</p>
-<p><strong>Note : </strong> Destination Charges (including GST)</p>
-<p>Above charges are exclusive of ocean freight</p>
-<p>Please check with our local agent for ocean freight</p>        
-<p>Thank you for choosing Big Navigators Pvt Ltd.</p>
+        <p>Thank you for choosing Big Navigators Pvt Ltd.</p>
     `;
 }
 
@@ -105,3 +251,6 @@ document.getElementById("cbm").addEventListener("blur", function() {
     }
 });
 </script>
+
+</body>
+</html>
