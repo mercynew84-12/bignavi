@@ -148,8 +148,11 @@
 </footer>
 
 <script>
-document.getElementById("contactForm").addEventListener("submit", function(e) {
+document.getElementById("contactForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
 
     const cbm = parseFloat(document.getElementById("cbm").value) || 0;
     const weight = parseInt(document.getElementById("weight").value) || 0;
@@ -161,13 +164,15 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
         return;
     }
 
-    // === General Cargo calculations ===
+    let originCharges = 0;
+    let destinationCharges = 0;
+
+    // === General Cargo ===
     if ((location === "chennai" && cargo === "general cargo") || 
         (location === "nhava sheva" && cargo === "general cargo")) {
 
         const A = Math.max(cbm, weight);
-
-        let originCharges = (A * 40) + 150;
+        originCharges = (A * 40) + 150;
 
         let F = (950 * A) + 5500 + 7500;
         let G1 = F * 0.18;
@@ -178,53 +183,57 @@ document.getElementById("contactForm").addEventListener("submit", function(e) {
         let G2 = I * 0.18;
         let H2 = I + G2;
 
-        let destinationCharges = H1 + H2;
+        destinationCharges = H1 + H2;
 
-        showResult(location, cargo, originCharges, destinationCharges);
+    // === DG Cargo (Chennai only here) ===
+    }  else if ((location === "chennai" && cargo === "dg cargo") || 
+           (location === "nhava sheva" && cargo === "dg cargo")) {
+        const B = Math.max(cbm, weight);
 
-    // === DG Cargo calculations (placeholders) ===
-} else if (location === "chennai" && cargo === "dg cargo") {
-    const B = Math.max(cbm, weight);
+        originCharges = (B * 280) + 2210;
+        let C = (1400 * B) + 5500 + 7500;
+        let D = C * 0.18;
+        let BS1 = C + D;
 
-    // Step 1: Total Origin Charges
-    let originCharges = (B * 280) + 2210;
+        let W = (380 * B) + (6200 * B) + 4200;
+        let X = W * 0.18;
+        let BS2 = W + X;
 
-    // Step 2: C
-    let C = (1400 * B) + 5500 + 7500;
-
-    // Step 3: D
-    let D = C * 0.18;
-
-    // Step 4: BS1
-    let BS1 = C + D;
-
-    // Step 5: W
-    let W = (380 * B) + (6200 * B) + 4200;
-
-    // Step 6: X
-    let X = W * 0.18;
-
-    // Step 7: BS2
-    let BS2 = W + X;
-
-    // Step 8: Total Destination Charges
-    let destinationCharges = BS1 + BS2;
-
-    showResult(location, cargo, originCharges, destinationCharges);
-}
-
+        destinationCharges = BS1 + BS2;
 
     } else {
         alert("Calculation logic for this cargo type or location is not yet added.");
+        return;
     }
-});
 
-// Helper function to display results
-function showResult(location, cargo, originCharges, destinationCharges) {
+    // Put results in hidden inputs for email
     document.getElementById("originCharges").value = originCharges.toFixed(2);
     document.getElementById("destinationCharges").value = destinationCharges.toFixed(2);
     document.getElementById("thankyouMessage").value = "Thank you for choosing Big Navigators Pvt Ltd.";
+    document.getElementById("submittedCBM").value = cbm.toFixed(2);
+    document.getElementById("submittedWeight").value = weight;
 
+    // === Send to Formspree without redirect ===
+    try {
+        const response = await fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: { "Accept": "application/json" }
+        });
+
+        if (response.ok) {
+            showResult(location, cargo, originCharges, destinationCharges, true);
+            form.reset();
+        } else {
+            showResult(location, cargo, originCharges, destinationCharges, false);
+        }
+    } catch (err) {
+        showResult(location, cargo, originCharges, destinationCharges, false);
+    }
+});
+
+// Display result inside page
+function showResult(location, cargo, originCharges, destinationCharges, success = true) {
     const heading = (location === "chennai") 
         ? "Chennai CIF Shipment" 
         : "Nhava Sheva CIF Shipment";
@@ -235,16 +244,22 @@ function showResult(location, cargo, originCharges, destinationCharges) {
         <h3>${heading} - ${cargo.toUpperCase()}</h3>
         <p><strong>Total Origin Charges: RMB</strong> ${originCharges.toFixed(2)}</p>
         <p><strong>Total Destination Charges: INR</strong> ${destinationCharges.toFixed(2)}</p>
-        <p>Thank you for choosing Big Navigators Pvt Ltd.</p>
+<p><strong>Note : </strong> Destination Charges (including GST)</p>
+<p>Above charges are exclusive of ocean freight </p>
+<p>Please check with our local agent for ocean freight</p>
+<p>Thank you for choosing Big Navigators </p>
+        <p style="color:${success ? 'green' : 'red'}">
+            ${success ? "✅ Your form was submitted successfully!" : "❌ There was a problem sending your form."}
+        </p>
     `;
 }
 
-// Prevent decimals in weight field
+// Prevent decimals in weight
 document.getElementById("weight").addEventListener("input", function() {
-    this.value = this.value.replace(/\D/g, ""); // only digits
+    this.value = this.value.replace(/\D/g, "");
 });
 
-// Format CBM to 2 decimals when leaving the field
+// Format CBM to 2 decimals
 document.getElementById("cbm").addEventListener("blur", function() {
     if(this.value) {
         this.value = parseFloat(this.value).toFixed(2);
